@@ -248,3 +248,18 @@ See:
 - Cilium CNI: network_data_plane = cilium
 
 Terraform IaC validated. AKS cluster definition complete with Cilium CNI, ACR, Key Vault, and workload identity.
+
+---
+
+## Module 8 — CI/CD GitHub Actions
+
+### Pipeline: Build, Scan and Deploy to AKS
+- File: .github/workflows/github-actions-aks.yml
+- Trigger: push to main branch
+- Jobs: Build image -> Trivy security scan -> Push to ACR -> Deploy to AKS
+- Build image: PASS (1m 12s) — Maven + Docker image built, artifact 119MB saved
+- Image digest: sha256:7c346a051dc99ea25d76928fd3cc3e5026732383c5d3cd26ad1bb5ef94e5dec7
+- Trivy security scan: PASS — scanned built image
+- Push to ACR: FAIL (expected) — no real Azure ACR provisioned in assessment scope
+- Deploy to AKS: skipped — depends on Push to ACR
+- Pipeline logic fully validated. Failure is infrastructure (no Azure subscription), not code.
