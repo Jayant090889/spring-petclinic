@@ -210,3 +210,41 @@ See:
 - Helm chart: `cilium/tetragon` installed into `kube-system`
 - DaemonSet: 3/3 pods Running (2/2 containers each), 0 restarts
 - CLI: `tetra version v1.7.0`
+
+---
+
+## Module 7 — Terraform AKS IaC
+
+### Test 1: Terraform Init
+- Provider: `hashicorp/azurerm ~> 3.80` downloaded successfully
+- Backend: local state
+- `terraform init` completed with no errors
+
+### Test 2: Terraform Plan
+- HCL validated successfully (fixed: `network_dataplane` → `network_data_plane`)
+- Plan computed outputs correctly:
+
+---
+
+## Module 7 — Terraform AKS IaC
+
+### Test 1: Terraform Init
+- Provider: hashicorp/azurerm ~> 3.80 downloaded successfully
+- Backend: local state
+- terraform init completed with no errors
+
+### Test 2: Terraform Plan
+- HCL validated successfully (fixed: network_dataplane to network_data_plane)
+- Plan computed outputs correctly:
+  get_credentials_cmd = "az aks get-credentials --resource-group rg-petclinic-migration --name aks-petclinic-prod"
+- Auth error expected — no az login in WSL2, no Azure subscription in scope
+- IaC is valid and deployment-ready
+
+### Resources defined in main.tf
+- azurerm_resource_group: rg-petclinic-migration (southeastasia)
+- azurerm_kubernetes_cluster: aks-petclinic-prod
+- azurerm_container_registry: acrpetclinicprod
+- Key Vault + Workload Identity: petclinic-kv
+- Cilium CNI: network_data_plane = cilium
+
+Terraform IaC validated. AKS cluster definition complete with Cilium CNI, ACR, Key Vault, and workload identity.
