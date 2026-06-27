@@ -67,7 +67,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin      = "azure"
     network_plugin_mode = "overlay"       # required for Cilium
-    network_dataplane   = "cilium"        # enables Cilium CNI
+    network_data_plane   = "cilium"        # enables Cilium CNI
     outbound_type       = "managedNATGateway"  # fixed egress IP for partner allowlists
     load_balancer_sku   = "standard"
   }
