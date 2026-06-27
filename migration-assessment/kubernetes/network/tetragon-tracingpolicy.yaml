@@ -1,0 +1,37 @@
+# Tetragon TracingPolicy — runtime observability for petclinic namespace
+# Install Tetragon first:
+#   helm repo add cilium https://helm.cilium.io
+#   helm install tetragon cilium/tetragon -n kube-system
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: petclinic-runtime-monitor
+spec:
+  kprobes:
+  # Monitor all process execution — detects unexpected shell, scripts, binaries
+  - call: "sys_execve"
+    syscall: true
+    args:
+    - index: 0
+      type: "string"
+    selectors:
+    - matchNamespaces:
+      - operator: In
+        values:
+        - "petclinic"
+      matchActions:
+      - action: Post
+
+  # Monitor outbound TCP connections — detects unexpected egress
+  - call: "tcp_connect"
+    syscall: false
+    args:
+    - index: 0
+      type: "sock"
+    selectors:
+    - matchNamespaces:
+      - operator: In
+        values:
+        - "petclinic"
+      matchActions:
+      - action: Post

@@ -1,0 +1,16 @@
+# On-premises Rancher simulation (k3d local)
+image:
+  repository: petclinic
+  tag: onprem-local
+  pullPolicy: Never       # use local image
+
+ingress:
+  className: nginx
+  host: petclinic.local
+  tlsSecret: ""           # no TLS on local
+
+database:
+  host: mysql-onprem
+  port: 3306
+
+replicaCount: 1           # single replica for local dev

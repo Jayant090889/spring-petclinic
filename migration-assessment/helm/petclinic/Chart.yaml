@@ -1,0 +1,13 @@
+apiVersion: v2
+name: petclinic
+description: Spring PetClinic — Rancher to AKS migration Helm chart
+type: application
+version: 1.0.0
+appVersion: "3.1.0"
+keywords:
+  - petclinic
+  - spring-boot
+  - rancher-to-aks
+maintainers:
+  - name: Jayant Prateek
+    email: jayant0908@gmail.com

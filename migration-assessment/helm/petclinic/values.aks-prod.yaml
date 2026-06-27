@@ -1,0 +1,28 @@
+# AKS production — banking-grade settings
+image:
+  repository: acrpetclinicprod.azurecr.io/petclinic
+  tag: ""                 # set at deploy time via --set image.tag=$SHA
+  pullPolicy: Always
+
+ingress:
+  className: nginx
+  host: petclinic.example.com
+  tlsSecret: petclinic-prod-tls
+
+database:
+  host: petclinic-prod-mysql.mysql.database.azure.com
+  port: 3306
+
+replicaCount: 2
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  cpuUtilization: 60
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi

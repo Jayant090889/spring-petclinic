@@ -1,0 +1,19 @@
+# AKS non-production (dev/test)
+image:
+  repository: acrpetclinicdev.azurecr.io/petclinic
+  tag: latest
+  pullPolicy: Always
+
+ingress:
+  className: nginx
+  host: petclinic-dev.example.com
+  tlsSecret: petclinic-dev-tls
+
+database:
+  host: petclinic-dev-mysql.mysql.database.azure.com
+  port: 3306
+
+replicaCount: 1
+hpa:
+  minReplicas: 1
+  maxReplicas: 2

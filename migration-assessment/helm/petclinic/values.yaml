@@ -1,0 +1,55 @@
+# Default values — overridden by environment-specific values files
+replicaCount: 2
+
+image:
+  repository: petclinic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: "petclinic"
+
+serviceAccount:
+  create: true
+  name: "petclinic-sa"
+  annotations: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: petclinic.local
+  tlsSecret: petclinic-tls
+
+database:
+  host: mysql
+  port: 3306
+  name: petclinic
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  cpuUtilization: 60
+
+pdb:
+  enabled: true
+  minAvailable: 1
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false

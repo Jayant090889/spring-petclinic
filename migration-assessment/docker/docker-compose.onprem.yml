@@ -1,0 +1,57 @@
+# Simulates the on-premises Rancher environment locally
+# Usage: docker-compose -f docker-compose.onprem.yml up -d
+version: "3.9"
+
+services:
+  petclinic:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: petclinic:onprem-local
+    container_name: petclinic-onprem
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=mysql
+      - MYSQL_URL=jdbc:mysql://mysql:3306/petclinic
+      - MYSQL_USER=petclinic
+      - MYSQL_PASS=${MYSQL_PASSWORD:-petclinic123}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - petclinic-net
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-onprem
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: petclinic
+      MYSQL_USER: petclinic
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-petclinic123}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - petclinic-net
+
+volumes:
+  mysql-data:
+
+networks:
+  petclinic-net:
+    driver: bridge

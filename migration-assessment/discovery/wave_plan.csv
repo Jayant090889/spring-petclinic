@@ -1,0 +1,8 @@
+wave,app_name,namespace,kind,image,dependencies,migration_pattern,risk_level,cutover_window,owner,notes
+Wave 1,petclinic,petclinic,Deployment,springcommunity/spring-petclinic:latest,mysql|petclinic-config|petclinic-db-secret,rehost,LOW,Week 1 - Saturday 02:00-06:00 SGT,Platform Team,Stateless Java app - direct rehost to AKS
+Wave 1,petclinic-svc,petclinic,Service,N/A,petclinic,rehost,LOW,Week 1 - Saturday 02:00-06:00 SGT,Platform Team,ClusterIP service - rehost with same spec
+Wave 1,petclinic-config,petclinic,ConfigMap,N/A,none,rehost,LOW,Week 1 - Saturday 02:00-06:00 SGT,Platform Team,Externalized config - update DB host to Azure MySQL FQDN
+Wave 2,mysql,petclinic,StatefulSet,mysql:8.0,mysql-data PVC,replatform,HIGH,Week 2 - Saturday 02:00-08:00 SGT,DBA + Platform Team,Replace with Azure Database for MySQL Flexible Server - data migration required
+Wave 2,petclinic-db-secret,petclinic,Secret,N/A,Azure Key Vault,replatform,MEDIUM,Week 2 - Saturday 02:00-06:00 SGT,Security Team,Migrate from K8s Secret to Azure Key Vault + Secret Store CSI Driver
+Wave 3,petclinic-ingress,petclinic,Ingress,nginx-ingress-controller,petclinic-svc|petclinic-tls,replatform,MEDIUM,Week 3 - Saturday 02:00-04:00 SGT,NetOps + Platform Team,DNS cutover - reduce TTL 48hr before. Switch A record to AKS LB IP.
+Wave 3,petclinic-tls,petclinic,Secret (TLS),N/A,cert-manager or Azure Key Vault,replatform,MEDIUM,Week 3 - Saturday 02:00-04:00 SGT,Security Team,TLS cert migration - provision via cert-manager on AKS or import to Key Vault

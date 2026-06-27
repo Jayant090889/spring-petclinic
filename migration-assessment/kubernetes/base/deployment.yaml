@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic
+  namespace: petclinic
+  labels:
+    app: petclinic
+    version: "1.0.0"
+    migrated-from: rancher
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petclinic
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0        # zero-downtime rollout
+  template:
+    metadata:
+      labels:
+        app: petclinic
+        version: "1.0.0"
+    spec:
+      serviceAccountName: petclinic-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+      - name: petclinic
+        image: petclinic:latest   # overridden by Helm values per environment
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: petclinic-config
+        env:
+        - name: MYSQL_URL
+          value: "jdbc:mysql://$(MYSQL_HOST):3306/petclinic"
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: petclinic-config
+              key: MYSQL_HOST
+              optional: true
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: petclinic-db-secret
+              key: username
+        - name: MYSQL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: petclinic-db-secret
+              key: password
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1024Mi"
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: tmp-dir
+          mountPath: /tmp
+      volumes:
+      - name: tmp-dir
+        emptyDir: {}

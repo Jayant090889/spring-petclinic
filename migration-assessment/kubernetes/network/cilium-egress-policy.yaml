@@ -1,0 +1,48 @@
+# CiliumNetworkPolicy — explicit egress for petclinic workload
+# Requires AKS with Azure CNI powered by Cilium
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: petclinic-network-policy
+  namespace: petclinic
+spec:
+  endpointSelector:
+    matchLabels:
+      app: petclinic
+  ingress:
+  # Allow traffic from NGINX ingress controller only
+  - fromEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
+  egress:
+  # Allow DNS resolution (required for FQDN-based policies)
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  # Allow connection to MySQL database pod
+  - toEndpoints:
+    - matchLabels:
+        app: mysql
+    toPorts:
+    - ports:
+      - port: "3306"
+        protocol: TCP
+  # Allow egress to approved partner API FQDN only
+  - toFQDNs:
+    - matchName: "api.partner-bank.com"
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+  # Block all other egress — any connection not matching above is denied
