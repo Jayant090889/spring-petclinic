@@ -263,3 +263,14 @@ Terraform IaC validated. AKS cluster definition complete with Cilium CNI, ACR, K
 - Push to ACR: FAIL (expected) — no real Azure ACR provisioned in assessment scope
 - Deploy to AKS: skipped — depends on Push to ACR
 - Pipeline logic fully validated. Failure is infrastructure (no Azure subscription), not code.
+
+---
+
+## Module 9 — Runbooks
+
+All runbooks present in migration-assessment/runbooks/:
+
+- rancher_to_aks_cutover_runbook.md — step-by-step cutover procedure
+- rollback_plan.md — rollback triggers, steps, and RTO targets
+- hypercare_plan.md — 72-hour post-migration monitoring plan
+- smoke_tests.md — post-cutover validation test suite
