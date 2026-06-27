@@ -1,0 +1,175 @@
+name: Build, Scan and Deploy to AKS
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  ACR_NAME: ${{ secrets.ACR_NAME }}
+  AKS_CLUSTER: aks-petclinic-prod
+  RESOURCE_GROUP: rg-petclinic-migration
+  NAMESPACE: petclinic
+
+jobs:
+  # ── Job 1: Build Docker image ───────────────────────────────────────────────
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t $ACR_NAME.azurecr.io/petclinic:${{ github.sha }} \
+            -f migration-assessment/docker/Dockerfile .
+
+      - name: Save image as artifact
+        run: |
+          docker save $ACR_NAME.azurecr.io/petclinic:${{ github.sha }} \
+            | gzip > image.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: image.tar.gz
+          retention-days: 1
+
+  # ── Job 2: Security scan ────────────────────────────────────────────────────
+  scan:
+    name: Trivy security scan
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+
+      - name: Load image
+        run: docker load < image.tar.gz
+
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "${{ env.ACR_NAME }}.azurecr.io/petclinic:${{ github.sha }}"
+          format: "table"
+          severity: "HIGH,CRITICAL"
+          exit-code: "0"          # warn only — change to 1 to fail on CRITICAL
+
+      - name: Save scan results
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy image \
+            $ACR_NAME.azurecr.io/petclinic:${{ github.sha }} \
+            --severity HIGH,CRITICAL \
+            --format json > scan-results.json || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scan-results
+          path: scan-results.json
+
+  # ── Job 3: Push to ACR ──────────────────────────────────────────────────────
+  push:
+    name: Push to ACR
+    needs: scan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+
+      - name: Load image
+        run: docker load < image.tar.gz
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_NAME }}.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Push image to ACR
+        run: |
+          docker push $ACR_NAME.azurecr.io/petclinic:${{ github.sha }}
+          docker tag $ACR_NAME.azurecr.io/petclinic:${{ github.sha }} \
+                     $ACR_NAME.azurecr.io/petclinic:latest
+          docker push $ACR_NAME.azurecr.io/petclinic:latest
+
+  # ── Job 4: Deploy to AKS ────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to AKS
+    needs: push
+    runs-on: ubuntu-latest
+    environment: production       # ← manual approval gate required
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group $RESOURCE_GROUP \
+            --name $AKS_CLUSTER
+
+      - name: Deploy via Helm
+        run: |
+          helm upgrade --install petclinic \
+            migration-assessment/helm/petclinic \
+            --namespace $NAMESPACE \
+            --create-namespace \
+            -f migration-assessment/helm/petclinic/values.aks-prod.yaml \
+            --set image.repository=$ACR_NAME.azurecr.io/petclinic \
+            --set image.tag=${{ github.sha }} \
+            --wait \
+            --timeout 5m \
+            --atomic              # auto-rollback on failure
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/petclinic -n $NAMESPACE
+          kubectl get pods -n $NAMESPACE
+          kubectl get ingress -n $NAMESPACE
+
+      - name: Smoke test
+        run: |
+          INGRESS_IP=$(kubectl get ingress petclinic-ingress -n $NAMESPACE \
+            -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          curl -sf -H "Host: petclinic.example.com" \
+            http://$INGRESS_IP/actuator/health | grep '"status":"UP"'
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          helm rollback petclinic -n $NAMESPACE
+          echo "Rollback completed"
+
+# ── Agent Design Decision ────────────────────────────────────────────────────
+# This pipeline uses GitHub-hosted managed runners (ubuntu-latest).
+#
+# MANAGED RUNNERS (chosen for this assessment):
+#   Pros: Zero infrastructure to manage. Auto-scaled by GitHub. Always patched.
+#   Cons: No access to private VNet. Cannot reach private AKS API server
+#         or private ACR without additional networking (VPN/ExpressRoute).
+#   Best for: Public or authorised-IP-restricted AKS endpoints (this setup).
+#
+# SELF-HOSTED RUNNERS (production banking recommendation):
+#   Pros: Runs inside your VNet — can reach private AKS, private ACR,
+#         private Key Vault. Full network isolation. Audit logs on your infra.
+#   Cons: You manage the runner VMs — patching, scaling, availability.
+#   Best for: MAS TRM-compliant banking environments where all endpoints
+#             are private and no traffic should leave the corporate network.
+#
+# For a production AKS estate at a Singapore bank (MAS TRM context):
+# Deploy self-hosted runners as a Deployment inside AKS system nodepool,
+# using workload identity to authenticate to ACR and Key Vault without
+# any stored credentials.
