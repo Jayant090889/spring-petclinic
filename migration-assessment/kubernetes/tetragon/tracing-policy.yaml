@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: petclinic-observe
+spec:
+  kprobes:
+  - call: "security_file_open"
+    syscall: false
+    args:
+    - index: 0
+      type: "file"
+  - call: "security_sk_classify_flow"
+    syscall: false
+    args:
+    - index: 0
+      type: "sock"

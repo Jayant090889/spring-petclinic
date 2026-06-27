@@ -201,3 +201,12 @@ See:
 - Test 4: Cross-namespace traffic dropped at 0ms (immediate) — default-deny ingress on petclinic namespace working correctly.
 
 **All 4 egress test cases PASS. Network isolation policy is functioning as designed.**
+
+---
+
+## Module 6 — Tetragon Runtime Observability
+
+### Test 1: Tetragon Installation
+- Helm chart: `cilium/tetragon` installed into `kube-system`
+- DaemonSet: 3/3 pods Running (2/2 containers each), 0 restarts
+- CLI: `tetra version v1.7.0`
