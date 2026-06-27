@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-06-27T02:19:32.436251",
+  "total_workloads": 1,
+  "workloads": [
+    {
+      "name": "unknown",
+      "namespace": "default",
+      "kind": "List",
+      "images": [],
+      "ports": [],
+      "env_vars": [],
+      "secrets": [],
+      "labels": {},
+      "annotations": {},
+      "replicas": 1,
+      "migration_pattern": "rehost",
+      "migration_risk": "LOW"
+    }
+  ]
+}

@@ -1,0 +1,774 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-06-27T02:11:57Z"
+    generateName: mysql-7599955575-
+    generation: 1
+    labels:
+      app: mysql
+      pod-template-hash: "7599955575"
+    name: mysql-7599955575-6hgjc
+    namespace: petclinic
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: mysql-7599955575
+      uid: 8dc14f84-37fc-48c4-9c20-58d06a5d5e4d
+    resourceVersion: "1155"
+    uid: 0064318c-f2b2-47c2-800f-8a63b892b475
+  spec:
+    containers:
+    - env:
+      - name: MYSQL_ROOT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            key: rootpassword
+            name: petclinic-db-secret
+      - name: MYSQL_DATABASE
+        value: petclinic
+      - name: MYSQL_USER
+        valueFrom:
+          secretKeyRef:
+            key: username
+            name: petclinic-db-secret
+      - name: MYSQL_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            key: password
+            name: petclinic-db-secret
+      image: mysql:8.0
+      imagePullPolicy: IfNotPresent
+      name: mysql
+      ports:
+      - containerPort: 3306
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-mkcgs
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: k3d-rancher-source-agent-0
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-mkcgs
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:12:20Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:11:57Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:12:20Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:12:20Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:11:57Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 250m
+        memory: 512Mi
+      containerID: containerd://734ad7e3b55c5016dfc2a5afe3a3817a3b1dd56a79ffecf9112c3394b598dfe8
+      image: docker.io/library/mysql:8.0
+      imageID: docker.io/library/mysql@sha256:7dcddc01f13bab2f15cde676d44d01f61fc9f99fe7785e86196dfc07d358ae2b
+      lastState: {}
+      name: mysql
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 512Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-06-27T02:12:20Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-mkcgs
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 172.20.0.4
+    hostIPs:
+    - ip: 172.20.0.4
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.42.0.5
+    podIPs:
+    - ip: 10.42.0.5
+    qosClass: Burstable
+    startTime: "2026-06-27T02:11:57Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-06-27T02:14:26Z"
+    generateName: petclinic-5bb75f8858-
+    generation: 1
+    labels:
+      app: petclinic
+      pod-template-hash: 5bb75f8858
+    name: petclinic-5bb75f8858-4dm82
+    namespace: petclinic
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: petclinic-5bb75f8858
+      uid: d02a6a91-a39d-41dc-bca2-714ee23a8b4e
+    resourceVersion: "1313"
+    uid: 2fab400d-bef5-4b8c-bf18-d69a52911fb2
+  spec:
+    containers:
+    - image: nginx:alpine
+      imagePullPolicy: IfNotPresent
+      name: petclinic
+      ports:
+      - containerPort: 80
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 80
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gq76w
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: k3d-rancher-source-server-0
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-gq76w
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:14:36Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:14:26Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:14:48Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:14:48Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-06-27T02:14:26Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 250m
+        memory: 256Mi
+      containerID: containerd://b1c2cb138a54ff7addf8bec6d5d20c8b08583daa070f0d14038ece2392da0597
+      image: docker.io/library/nginx:alpine
+      imageID: docker.io/library/nginx@sha256:54f2a904c251d5a34adf545a72d32515a15e08418dae0266e23be2e18c66fefa
+      lastState: {}
+      name: petclinic
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-06-27T02:14:35Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 6
+          - 10
+          - 11
+          - 20
+          - 26
+          - 27
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-gq76w
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 172.20.0.3
+    hostIPs:
+    - ip: 172.20.0.3
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.42.2.5
+    podIPs:
+    - ip: 10.42.2.5
+    qosClass: Burstable
+    startTime: "2026-06-27T02:14:26Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"mysql","namespace":"petclinic"},"spec":{"ports":[{"port":3306,"targetPort":3306}],"selector":{"app":"mysql"}}}
+    creationTimestamp: "2026-06-27T02:11:56Z"
+    name: mysql
+    namespace: petclinic
+    resourceVersion: "1126"
+    uid: f7505161-e097-448f-80e9-93f8d0005316
+  spec:
+    clusterIP: 10.43.98.134
+    clusterIPs:
+    - 10.43.98.134
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: 3306
+    selector:
+      app: mysql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"petclinic-svc","namespace":"petclinic"},"spec":{"ports":[{"port":80,"targetPort":80}],"selector":{"app":"petclinic"}}}
+    creationTimestamp: "2026-06-27T02:12:38Z"
+    name: petclinic-svc
+    namespace: petclinic
+    resourceVersion: "1284"
+    uid: 5a9e5ca1-ac53-4ebe-a01a-05629e5eba16
+  spec:
+    clusterIP: 10.43.116.7
+    clusterIPs:
+    - 10.43.116.7
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: petclinic
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"mysql","namespace":"petclinic"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"mysql"}},"template":{"metadata":{"labels":{"app":"mysql"}},"spec":{"containers":[{"env":[{"name":"MYSQL_ROOT_PASSWORD","valueFrom":{"secretKeyRef":{"key":"rootpassword","name":"petclinic-db-secret"}}},{"name":"MYSQL_DATABASE","value":"petclinic"},{"name":"MYSQL_USER","valueFrom":{"secretKeyRef":{"key":"username","name":"petclinic-db-secret"}}},{"name":"MYSQL_PASSWORD","valueFrom":{"secretKeyRef":{"key":"password","name":"petclinic-db-secret"}}}],"image":"mysql:8.0","name":"mysql","ports":[{"containerPort":3306}],"resources":{"limits":{"cpu":"500m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"512Mi"}}}]}}}}
+    creationTimestamp: "2026-06-27T02:11:56Z"
+    generation: 1
+    name: mysql
+    namespace: petclinic
+    resourceVersion: "1159"
+    uid: a8a73984-e2e6-438c-98fc-ecd2f2058f6d
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: mysql
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: mysql
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: rootpassword
+                name: petclinic-db-secret
+          - name: MYSQL_DATABASE
+            value: petclinic
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: petclinic-db-secret
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: petclinic-db-secret
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          name: mysql
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-06-27T02:12:20Z"
+      lastUpdateTime: "2026-06-27T02:12:20Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-06-27T02:11:56Z"
+      lastUpdateTime: "2026-06-27T02:12:20Z"
+      message: ReplicaSet "mysql-7599955575" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"petclinic","migrated-from":"rancher"},"name":"petclinic","namespace":"petclinic"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"petclinic"}},"template":{"metadata":{"labels":{"app":"petclinic"}},"spec":{"containers":[{"image":"nginx:alpine","name":"petclinic","ports":[{"containerPort":80}],"readinessProbe":{"httpGet":{"path":"/","port":80},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"250m","memory":"256Mi"}}}]}}}}
+    creationTimestamp: "2026-06-27T02:14:26Z"
+    generation: 1
+    labels:
+      app: petclinic
+      migrated-from: rancher
+    name: petclinic
+    namespace: petclinic
+    resourceVersion: "1316"
+    uid: 1591b1e5-8910-43f1-a671-260ee8bfd106
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: petclinic
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: petclinic
+      spec:
+        containers:
+        - image: nginx:alpine
+          imagePullPolicy: IfNotPresent
+          name: petclinic
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-06-27T02:14:48Z"
+      lastUpdateTime: "2026-06-27T02:14:48Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-06-27T02:14:26Z"
+      lastUpdateTime: "2026-06-27T02:14:48Z"
+      message: ReplicaSet "petclinic-5bb75f8858" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2026-06-27T02:11:56Z"
+    generation: 1
+    labels:
+      app: mysql
+      pod-template-hash: "7599955575"
+    name: mysql-7599955575
+    namespace: petclinic
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: mysql
+      uid: a8a73984-e2e6-438c-98fc-ecd2f2058f6d
+    resourceVersion: "1158"
+    uid: 8dc14f84-37fc-48c4-9c20-58d06a5d5e4d
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: mysql
+        pod-template-hash: "7599955575"
+    template:
+      metadata:
+        labels:
+          app: mysql
+          pod-template-hash: "7599955575"
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: rootpassword
+                name: petclinic-db-secret
+          - name: MYSQL_DATABASE
+            value: petclinic
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: petclinic-db-secret
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: petclinic-db-secret
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          name: mysql
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2026-06-27T02:14:26Z"
+    generation: 1
+    labels:
+      app: petclinic
+      pod-template-hash: 5bb75f8858
+    name: petclinic-5bb75f8858
+    namespace: petclinic
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: petclinic
+      uid: 1591b1e5-8910-43f1-a671-260ee8bfd106
+    resourceVersion: "1315"
+    uid: d02a6a91-a39d-41dc-bca2-714ee23a8b4e
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: petclinic
+        pod-template-hash: 5bb75f8858
+    template:
+      metadata:
+        labels:
+          app: petclinic
+          pod-template-hash: 5bb75f8858
+      spec:
+        containers:
+        - image: nginx:alpine
+          imagePullPolicy: IfNotPresent
+          name: petclinic
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIBeDCCAR2gAwIBAgIBADAKBggqhkjOPQQDAjAjMSEwHwYDVQQDDBhrM3Mtc2Vy
+      dmVyLWNhQDE3ODI1MjU2NzkwHhcNMjYwNjI3MDEwMTE5WhcNMzYwNjI0MDEwMTE5
+      WjAjMSEwHwYDVQQDDBhrM3Mtc2VydmVyLWNhQDE3ODI1MjU2NzkwWTATBgcqhkjO
+      PQIBBggqhkjOPQMBBwNCAAT+xzvpg/AsmxwJtiqGz1OOKvn0GQ9PXojejJs6ayOM
+      X4BxTLvGHCLJ3xKOcPXsYAtdiBQK6fOzkQioSxE6xtV2o0IwQDAOBgNVHQ8BAf8E
+      BAMCAqQwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUgQCrfH9WNJVPUozhADgk
+      yTxdG9UwCgYIKoZIzj0EAwIDSQAwRgIhAI0PUWuanNg0aiiu9/L1ApfhIxET8muo
+      hHc1HdsXHlxrAiEAqpSPs3w3Q8lwCD1CpSRKFbTWqZa7HT1MnyEPBXv5yuA=
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-06-27T02:04:39Z"
+    name: kube-root-ca.crt
+    namespace: petclinic
+    resourceVersion: "904"
+    uid: ef468677-51d0-4c72-aa57-dfb01519ea58
+- apiVersion: v1
+  data:
+    password: cGV0Y2xpbmljMTIz
+    rootpassword: cm9vdDEyMw==
+    username: cGV0Y2xpbmlj
+  kind: Secret
+  metadata:
+    creationTimestamp: "2026-06-27T02:11:08Z"
+    name: petclinic-db-secret
+    namespace: petclinic
+    resourceVersion: "1096"
+    uid: 9dd18a0c-694e-4d80-a7f3-ecd6aeb1cca3
+  type: Opaque
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: "2026-06-27T02:04:39Z"
+    name: default
+    namespace: petclinic
+    resourceVersion: "903"
+    uid: aa1788b0-b349-4d41-997c-e99e47fc63fe
+kind: List
+metadata:
+  resourceVersion: ""

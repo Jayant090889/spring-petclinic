@@ -1,0 +1,2 @@
+name,namespace,kind,images,ports,replicas,migration_pattern,migration_risk
+unknown,default,List,[],[],1,rehost,LOW
