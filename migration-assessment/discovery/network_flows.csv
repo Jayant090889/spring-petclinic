@@ -1,0 +1,9 @@
+source_namespace,source_workload,destination,port,protocol,direction,policy,notes
+petclinic,petclinic,mysql.petclinic.svc.cluster.local,3306,TCP,egress,ALLOW,MySQL database connection via JDBC
+petclinic,petclinic,kube-dns.kube-system.svc.cluster.local,53,UDP,egress,ALLOW,Internal DNS resolution
+petclinic,petclinic,kubernetes.default.svc.cluster.local,443,TCP,egress,ALLOW,Kubernetes API (health probes)
+petclinic,petclinic,*.google.com,443,TCP,egress,DENY,Internet egress blocked by default-deny
+ingress-nginx,ingress-nginx-controller,petclinic-svc.petclinic.svc.cluster.local,80,TCP,ingress,ALLOW,NGINX ingress to petclinic service
+test-isolation,attacker,petclinic-pod,80,TCP,ingress,DENY,Cross-namespace isolation enforced
+external,client,petclinic.example.com,80,TCP,ingress,ALLOW,External HTTP via NGINX ingress
+external,client,petclinic.example.com,443,TCP,ingress,ALLOW,External HTTPS via NGINX ingress (TLS)
